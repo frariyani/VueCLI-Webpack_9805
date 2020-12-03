@@ -14,35 +14,57 @@ const router = new VueRouter({
     routes: [
         {
             path: "/",
-            name: "admin",
             component: importComponent('DashboardLayout'),
+            meta: {Auth:true},
             children: [
-                // Dashboard
-                {
-                    path: "/",
-                    name: "Root",
+                //dashboard
+                {   
+                    path: "/dashboard",
+                    name: "Dashboard",
+                    meta: {title: 'Dashboard'},
                     component: importComponent('Dashboard'),
                 },
-                // To do List
+                //products
                 {
-                    path: "/gd",
-                    name: "Guided",
-                    component: importComponent('TodoList/List'),
+                    path: "/products",
+                    name: "Products",
+                    meta: {title: 'Products'},
+                    component: importComponent('DataMaster/Products'),
                 },
-                // UGD To do List
-                {   
-                    path: "/ugd",
-                    name: "Unguided",
-                    component: importComponent('TodoList/ListUGD'),
-                },
+                //profile
                 {
-                    path: "/tgs",
-                    name: "Tugas",
-                    component: importComponent('TodoList/ListTugas'),
+                    path: "/profile",
+                    name: "Profile",
+                    meta: {title: 'Profile'},
+                    component: importComponent('DataMaster/Profile'),
                 }
             ]
         },
-    ]
+        //login
+        {
+            path: "/login",
+            name: "login",
+            meta: {title: 'Login'},
+            component: importComponent('Login'),
+        },
+        {
+            path: '*',
+            redirect: '/'
+        },
+    ],
+});
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.Auth)) {
+        if (localStorage.getItem('token')) {
+            next();
+        }
+        else {
+            router.replace('/login')
+        }
+    } else {
+        next()
+    }
 });
 
 export default router;
